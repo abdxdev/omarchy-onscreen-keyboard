@@ -3,7 +3,9 @@
 ![Preview](https://raw.githubusercontent.com/abdxdev/omarchy-onscreen-keyboard/refs/heads/main/preview.png)
 
 A clickable QWERTY keyboard panel for the Omarchy Quattro bar. Types
-directly into whatever window currently has focus, using `wtype`.
+directly into whatever window currently has focus, using `wtype`. Omarchy
+ships with `wtype` preinstalled; if it is missing, the keyboard shows an
+Install button for the required dependencies.
 
 Declared as a standalone `panel` + `bar-widget` plugin (not a nested
 bar-popover) so it's fully independent of the bar's normal
@@ -12,14 +14,10 @@ click the bar icon or the panel's own close button.
 
 ## Requirements
 
-- `wtype` (`sudo pacman -S wtype`) — injects keystrokes into the
-  focused window.
-- Hyprland + `hyprctl` — before every keypress the plugin runs
-  `hyprctl dispatch focuscurrentorlast` to reclaim focus on the real
-  target window first. This works around a known Hyprland quirk where
-  clicking a layer-shell surface can leave `hyprctl`'s notion of the
-  "current" window pointed at nothing real, even with the panel's
-  `keyboardFocus` set to `None`.
+- `wtype` is preinstalled on Omarchy. If it is missing, use the keyboard's
+  Install button, or run `omarchy pkg add wtype hyprland`.
+- Hyprland + `hyprctl` — before every keypress the plugin refocuses the real
+  target window so `wtype` can type into it.
 
 ## Install
 
@@ -30,12 +28,14 @@ omarchy plugin add https://github.com/abdxdev/omarchy-onscreen-keyboard.git --en
 ## Usage
 
 Click the keyboard icon in the bar to open or close the keyboard.
-Click the ✕ in the panel to close it, or click the bar icon again.
+You can also drag the keyboard around your screen by clicking and holding the top bar.
 
+- **Language Switching:** The top bar features a language switcher button that detects your physical keyboard's active layout (e.g. `English (US)`, `Urdu (Pakistan)`). Clicking it will cycle through your system's available layouts and instantly sync both your on-screen and physical keyboard (`hyprctl switchxkblayout`).
 - **Shift** applies to the next key only, then resets.
 - **Caps** toggles and stays on until pressed again.
-- **Ctrl / Alt / Super** arm a one-shot modifier combo for the next
-  key press (e.g. Ctrl then C sends Ctrl+C).
+- **Ctrl / Alt / Super / AltGr** arm a one-shot modifier combo for the next key press. **Double-press** these modifiers to lock them.
+- **Delete / Backspace:** Includes both a standard Backspace and a dedicated Delete key.
+- Close the keyboard by clicking the ✕ in the top right, or clicking the bar icon again.
 
 ## Configure
 

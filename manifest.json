@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "io.github.abdxdev.onscreen-keyboard",
   "name": "On-Screen Keyboard",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "abdxdev",
   "license": "MIT",
   "description": "A clickable on-screen QWERTY keyboard that types into whatever window currently has focus. Toggle with the bar icon. Summon with: omarchy-shell shell toggle io.github.abdxdev.onscreen-keyboard",
