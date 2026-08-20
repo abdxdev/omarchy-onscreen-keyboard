@@ -10,9 +10,9 @@ Item {
     signal closeRequested()
 
     // ---- Design tokens, copied 1:1 from the reference HTML/CSS ----
-    readonly property real gapPx: Style.space(6)
+    readonly property real gapPx: Style.spacing.md
     readonly property real keyHeight: Style.space(42)
-    readonly property real keyRadius: Style.space(6)
+    readonly property real keyRadius: Style.cornerRadius
     readonly property real containerMaxWidth: Style.space(820)
     // Rows fill the same total width as the container minus its own
     // padding (which equals the gap), exactly like the CSS container's
@@ -22,13 +22,16 @@ Item {
     readonly property color keyBg: Util.alpha(Color.foreground, Style.normalFillAlpha)
     readonly property color keyHoverBg: Util.alpha(Color.foreground, Style.hoverFillAlpha)
     readonly property color keyActiveBg: Util.alpha(Color.foreground, Style.pressedFillAlpha)
-    readonly property color keyBorderColor: Style.normalBorderColor
-    readonly property color accentColor: Color.accent
-    readonly property color closeHoverColor: Color.urgent
+    readonly property color keyBorderColor: Util.alpha(Color.foreground, Style.pressedFillAlpha)
+    readonly property color accentColor: Util.alpha(Color.accent, Style.pressedFillAlpha)
+    readonly property color closeHoverColor: Util.alpha(Color.urgent, Style.pressedFillAlpha)
     readonly property color textMain: Color.foreground
     readonly property color textDim: Color.muted
     readonly property color textHighlightColor: Color.foreground
     readonly property string keyboardFont: Style.font.family
+    readonly property int keyBorderWidth: Style.normalBorderWidth
+    readonly property int keyFontSize: Style.font.body
+    readonly property int keySmallFontSize: Style.font.bodySmall
 
     property bool capsOn: false
     property bool shiftOn: false
@@ -152,7 +155,7 @@ Item {
                             anchors.fill: parent
                             visible: keyData.cluster !== "arrows"
                             radius: root.keyRadius
-                            border.width: 1
+                            border.width: root.keyBorderWidth
 
                             property bool toggled: root.isToggled(keyData)
                             property bool isClose: keyData.key === "close"
@@ -177,7 +180,7 @@ Item {
                                     ? root.textHighlightColor
                                     : root.textMain
                                 font.family: root.keyboardFont
-                                font.pixelSize: 12
+                                font.pixelSize: root.keyFontSize
                             }
 
                             // Stacked dual symbols: shifted symbol on top
@@ -193,7 +196,7 @@ Item {
                                 color: root.isUpper() ? root.textHighlightColor : root.textDim
                                 font.bold: root.isUpper()
                                 font.family: root.keyboardFont
-                                font.pixelSize: 11
+                                font.pixelSize: root.keySmallFontSize
                             }
 
                             Text {
@@ -204,7 +207,7 @@ Item {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 color: root.isUpper() ? root.textDim : root.textMain
                                 font.family: root.keyboardFont
-                                font.pixelSize: 12
+                                font.pixelSize: root.keyFontSize
                             }
 
                             MouseArea {
@@ -228,7 +231,7 @@ Item {
                                 width: arrowRow.subWidth
                                 height: parent.height
                                 radius: root.keyRadius
-                                border.width: 1
+                                border.width: root.keyBorderWidth
                                 border.color: root.keyBorderColor
                                 color: leftArrowArea.pressed ? root.keyActiveBg
                                     : leftArrowArea.containsMouse ? root.keyHoverBg
@@ -238,7 +241,7 @@ Item {
                                     text: "\u25c0"
                                     color: root.textMain
                                     font.family: root.keyboardFont
-                                    font.pixelSize: 12
+                                    font.pixelSize: root.keyFontSize
                                 }
                                 MouseArea {
                                     id: leftArrowArea
@@ -257,7 +260,7 @@ Item {
                                     width: parent.width
                                     height: (parent.height - parent.spacing) / 2
                                     radius: root.keyRadius
-                                    border.width: 1
+                                    border.width: root.keyBorderWidth
                                     border.color: root.keyBorderColor
                                     color: upArrowArea.pressed ? root.keyActiveBg
                                         : upArrowArea.containsMouse ? root.keyHoverBg
@@ -267,7 +270,7 @@ Item {
                                         text: "\u25b2"
                                         color: root.textMain
                                         font.family: root.keyboardFont
-                                        font.pixelSize: 11
+                                        font.pixelSize: root.keySmallFontSize
                                     }
                                     MouseArea {
                                         id: upArrowArea
@@ -281,7 +284,7 @@ Item {
                                     width: parent.width
                                     height: (parent.height - parent.spacing) / 2
                                     radius: root.keyRadius
-                                    border.width: 1
+                                    border.width: root.keyBorderWidth
                                     border.color: root.keyBorderColor
                                     color: downArrowArea.pressed ? root.keyActiveBg
                                         : downArrowArea.containsMouse ? root.keyHoverBg
@@ -291,7 +294,7 @@ Item {
                                         text: "\u25bc"
                                         color: root.textMain
                                         font.family: root.keyboardFont
-                                        font.pixelSize: 11
+                                        font.pixelSize: root.keySmallFontSize
                                     }
                                     MouseArea {
                                         id: downArrowArea
@@ -306,7 +309,7 @@ Item {
                                 width: arrowRow.subWidth
                                 height: parent.height
                                 radius: root.keyRadius
-                                border.width: 1
+                                border.width: root.keyBorderWidth
                                 border.color: root.keyBorderColor
                                 color: rightArrowArea.pressed ? root.keyActiveBg
                                     : rightArrowArea.containsMouse ? root.keyHoverBg
@@ -316,7 +319,7 @@ Item {
                                     text: "\u25b6"
                                     color: root.textMain
                                     font.family: root.keyboardFont
-                                    font.pixelSize: 12
+                                    font.pixelSize: root.keyFontSize
                                 }
                                 MouseArea {
                                     id: rightArrowArea

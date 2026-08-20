@@ -15,7 +15,7 @@
   "barWidget": {
     "displayName": "On-Screen Keyboard",
     "description": "Bar icon that toggles the on-screen keyboard",
-    "category": "Accessibility",
+    "category": "Widgets",
     "allowMultiple": false,
     "defaultSection": "right"
   }

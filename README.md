@@ -1,5 +1,7 @@
 # On-Screen Keyboard
 
+![Preview](https://raw.githubusercontent.com/abdxdev/omarchy-onscreen-keyboard/refs/heads/main/preview.png)
+
 A clickable QWERTY keyboard panel for the Omarchy Quattro bar. Types
 directly into whatever window currently has focus, using `wtype`.
 

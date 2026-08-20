@@ -46,24 +46,25 @@ Item {
         exclusionMode: ExclusionMode.Ignore
 
         // Mirrors the reference `.keyboard-container`: solid panel
-        // background, subtle border, padding equal to the key gap, and
-        // a radius 4px larger than the keys' own radius. No title bar —
-        // the reference has none; its ✕ lives in the key grid itself.
+        // background, subtle border, and padding equal to the key gap.
+        // Corner rounding follows Omarchy's shared style token.
+        // No title bar — the reference has none; its ✕ lives in the
+        // key grid itself.
         Rectangle {
             id: card
-            width: Math.min(panel.width - Style.space(16), keyboard.implicitWidth + keyboard.gapPx * 2)
+            width: Math.min(panel.width - Style.spacing.popupPadding, keyboard.implicitWidth + keyboard.gapPx * 2) + Style.spacing.popupPadding
             x: (panel.width - width) / 2
-            y: panel.height - height - Style.space(8)
-            implicitHeight: keyboard.implicitHeight + keyboard.gapPx * 2 + dragArea.height
-            radius: keyboard.keyRadius + Style.space(4)
+            y: panel.height - height - Style.spacing.lg
+            implicitHeight: keyboard.implicitHeight + keyboard.gapPx * 2 + dragArea.height + Style.spacing.popupPadding / 2
+            radius: Style.cornerRadius
             color: Color.popups.background
-            border.color: keyboard.keyBorderColor
-            border.width: 1
+            border.color: Color.accent
+            border.width: 2
 
             MouseArea {
                 id: dragArea
                 width: parent.width
-                height: Style.space(18)
+                height: 25
                 cursorShape: Qt.SizeAllCursor
                 drag.target: card
                 drag.axis: Drag.XAndYAxis

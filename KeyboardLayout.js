@@ -42,7 +42,7 @@ var rows = [
         { label: "Ctrl", key: "ctrl", w: 1.25 },
         { label: "Super", key: "logo", w: 1.25 },
         { label: "Alt", key: "alt", w: 1.25 },
-        { label: "\u{1F600}", key: "emoji", w: 1.25 },
+        { label: "", key: "emoji", w: 1.25 },
         { t: " ", label: "", w: 5.5 },
         { label: "AltGr", key: "altgr", w: 1.25 },
         { label: "Super", key: "logo", w: 1.25 },
