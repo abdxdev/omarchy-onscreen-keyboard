@@ -73,15 +73,15 @@ Item {
         updateLayoutRows()
     }
 
-    // Called on startup only — reads the system's current layout and populates
-    // languageCycle. After the user manually cycles, we stop syncing currentLayout
-    // from the system (the virtual keyboard always reports index 0, so syncing
-    // would constantly fight the user's choice).
-    property bool initialSyncDone: false
+    // The virtual keyboard owns its language state (Windows OSK behavior):
+    // it always starts in English and never follows the physical layout.
+    // Hyprland is only queried for the *available* layouts to populate
+    // languageCycle (and their display names) — currentLayout is never
+    // synced from the system, so Alt+Shift on the physical keyboard and the
+    // virtual language button can never fight each other.
 
     function parseHyprLayoutOutput(text) {
         var lines = String(text || "").split("\n")
-        var active = ""
         var detected = []
         var names = ({})
 
@@ -90,10 +90,6 @@ Item {
             if (!line) continue
             var parts = line.split("\t")
             if (parts.length < 2) continue
-            if (parts[0] === "ACTIVE") {
-                active = String(parts[1] || "").trim()
-                continue
-            }
             if (parts[0] === "LAYOUT") {
                 detected.push(String(parts[1] || "").trim())
             }
@@ -111,21 +107,6 @@ Item {
         for (var k in layoutNameMap) merged[k] = layoutNameMap[k]
         for (var k in names) merged[k] = names[k]
         layoutNameMap = merged
-
-        // Only sync currentLayout from system on first load, not on periodic polls.
-        // The virtual keyboard (.main == true) always stays at index 0, so subsequent
-        // syncs would permanently fight any manual language switch by the user.
-        if (!initialSyncDone) {
-            initialSyncDone = true
-            var selected = active
-            if (!selected && detected.length > 0) selected = detected[0]
-            if (selected && selected !== currentLayout) {
-                layoutCycleIndex = Math.max(0, detected.indexOf(selected))
-                loadLanguageLayout(selected)
-            } else {
-                layoutCycleIndex = Math.max(0, detected.indexOf(currentLayout))
-            }
-        }
     }
 
     function refreshLayoutsFromHypr() {
@@ -202,12 +183,16 @@ Item {
 
     function cycleLanguage() {
         if (languageCycle.length < 2) return
-        // Advance our local index so we know exactly what layout is next,
-        // independent of the system's virtual keyboard reporting wrong index.
+        // Virtual-only switch (Windows OSK behavior): only our own labels and
+        // symbols change. The physical layout is never touched — no
+        // `hyprctl switchxkblayout` — so Alt+Shift keeps working independently.
+        // Typing goes through `wtype -- <text>`, which carries the visible
+        // character itself. The index is derived from currentLayout (not the
+        // stored counter) so a refreshed languageCycle can never desync it.
+        layoutCycleIndex = languageCycle.indexOf(currentLayout)
+        if (layoutCycleIndex < 0) layoutCycleIndex = 0
         layoutCycleIndex = (layoutCycleIndex + 1) % languageCycle.length
-        var nextLayout = languageCycle[layoutCycleIndex]
-        Quickshell.execDetached(["hyprctl", "switchxkblayout", "all", "next"])
-        loadLanguageLayout(nextLayout)
+        loadLanguageLayout(languageCycle[layoutCycleIndex])
     }
 
     Component.onCompleted: refreshLayoutsFromHypr()
@@ -250,8 +235,8 @@ Item {
         }
     }
 
-    // Periodic sync: only updates languageCycle (available layouts), never
-    // overrides currentLayout after the user has manually cycled (initialSyncDone=true).
+    // Periodic sync: only refreshes languageCycle (available layouts) and
+    // display names. currentLayout is virtual-owned and never overwritten.
     Timer {
         id: layoutSyncTimer
         interval: 5000

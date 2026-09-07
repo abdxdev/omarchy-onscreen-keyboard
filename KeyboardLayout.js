@@ -119,7 +119,10 @@ var tokenCharMap = {
     rightdoublequotemark: "\u201d",
     brokenbar: "\u00a6",
     currency: "\u00a4",
-    EuroSign: "\u20ac"
+    EuroSign: "\u20ac",
+    multiply: "\u00d7",
+    ellipsis: "\u2026",
+    enfilledcircbullet: "\u2022"
 }
 
 // X11 Cyrillic keysym names -> characters. Cyrillic layouts (ua, ru, bg,
@@ -252,6 +255,92 @@ var cyrillicCharMap = {
     Cyrillic_u_macron: "\u04ef"
 }
 
+// X11 Arabic/Farsi keysym names -> characters. The Persian (ir) layout spells
+// its symbols as named keysyms (Arabic_dad, Farsi_yeh, ...) rather than U####
+// escapes, so without this every key falls back to its Latin label and the
+// on-screen keyboard stays English. Values verified against
+// /usr/include/X11/keysymdef.h. Kept generic (full Arabic block, not just
+// Iranian keys) so other Arabic-script layouts (ara, eg, iq, ...) work too,
+// exactly like cyrillicCharMap does for Cyrillic layouts.
+var arabicCharMap = {
+    // Persian (Extended Arabic-Indic) digits + yeh
+    Farsi_0: "\u06f0",
+    Farsi_1: "\u06f1",
+    Farsi_2: "\u06f2",
+    Farsi_3: "\u06f3",
+    Farsi_4: "\u06f4",
+    Farsi_5: "\u06f5",
+    Farsi_6: "\u06f6",
+    Farsi_7: "\u06f7",
+    Farsi_8: "\u06f8",
+    Farsi_9: "\u06f9",
+    Farsi_yeh: "\u06cc",
+    Arabic_farsi_yeh: "\u06cc",
+    // Letters
+    Arabic_hamza: "\u0621",
+    Arabic_maddaonalef: "\u0622",
+    Arabic_hamzaonalef: "\u0623",
+    Arabic_hamzaonwaw: "\u0624",
+    Arabic_hamzaunderalef: "\u0625",
+    Arabic_hamzaonyeh: "\u0626",
+    Arabic_alef: "\u0627",
+    Arabic_beh: "\u0628",
+    Arabic_tehmarbuta: "\u0629",
+    Arabic_teh: "\u062a",
+    Arabic_theh: "\u062b",
+    Arabic_jeem: "\u062c",
+    Arabic_hah: "\u062d",
+    Arabic_khah: "\u062e",
+    Arabic_dal: "\u062f",
+    Arabic_thal: "\u0630",
+    Arabic_ra: "\u0631",
+    Arabic_zain: "\u0632",
+    Arabic_seen: "\u0633",
+    Arabic_sheen: "\u0634",
+    Arabic_sad: "\u0635",
+    Arabic_dad: "\u0636",
+    Arabic_tah: "\u0637",
+    Arabic_zah: "\u0638",
+    Arabic_ain: "\u0639",
+    Arabic_ghain: "\u063a",
+    Arabic_tatweel: "\u0640",
+    Arabic_feh: "\u0641",
+    Arabic_qaf: "\u0642",
+    Arabic_kaf: "\u0643",
+    Arabic_lam: "\u0644",
+    Arabic_meem: "\u0645",
+    Arabic_noon: "\u0646",
+    Arabic_ha: "\u0647",
+    Arabic_waw: "\u0648",
+    Arabic_alefmaksura: "\u0649",
+    Arabic_yeh: "\u064a",
+    Arabic_superscript_alef: "\u0670",
+    Arabic_keheh: "\u06a9",
+    Arabic_gaf: "\u06af",
+    Arabic_noon_ghunna: "\u06ba",
+    Arabic_peh: "\u067e",
+    Arabic_tcheh: "\u0686",
+    Arabic_jeh: "\u0698",
+    Arabic_yeh_baree: "\u06d2",
+    // Harakat / diacritics (Shift layer on ir)
+    Arabic_fathatan: "\u064b",
+    Arabic_dammatan: "\u064c",
+    Arabic_kasratan: "\u064d",
+    Arabic_fatha: "\u064e",
+    Arabic_damma: "\u064f",
+    Arabic_kasra: "\u0650",
+    Arabic_shadda: "\u0651",
+    Arabic_sukun: "\u0652",
+    Arabic_madda_above: "\u0653",
+    Arabic_hamza_above: "\u0654",
+    Arabic_hamza_below: "\u0655",
+    // Punctuation
+    Arabic_comma: "\u060c",
+    Arabic_semicolon: "\u061b",
+    Arabic_question_mark: "\u061f",
+    Arabic_percent: "\u066a"
+}
+
 function cloneKey(keyData) {
     var out = {}
     for (var field in keyData) {
@@ -276,8 +365,10 @@ function cloneRows(sourceRows) {
 function tokenToText(token, fallback) {
     var normalized = String(token || "").trim()
     if (normalized === "") return fallback
+    if (normalized === "NoSymbol" || normalized === "VoidSymbol") return fallback
     if (tokenCharMap.hasOwnProperty(normalized)) return tokenCharMap[normalized]
     if (cyrillicCharMap.hasOwnProperty(normalized)) return cyrillicCharMap[normalized]
+    if (arabicCharMap.hasOwnProperty(normalized)) return arabicCharMap[normalized]
     if (/^U[0-9A-Fa-f]{4,6}$/.test(normalized)) {
         return String.fromCodePoint(parseInt(normalized.slice(1), 16))
     }
