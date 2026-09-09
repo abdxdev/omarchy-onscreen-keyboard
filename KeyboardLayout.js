@@ -324,8 +324,17 @@ function applyLanguage(rowsSource, layoutCode, symbolMap) {
 // can stay a plain .pragma library script; QML side calls
 // Quickshell.execDetached(KeyboardLayout.buildXxx(...)).
 
+// Chromium (and Electron) drops characters that arrive as the very first
+// key event of a wtype invocation — in practice every symbol (space, !, #,
+// :, ., ...) the on-screen keyboard clicks. Each click is its own fresh
+// wtype process, so every character is "first". Letters and digits survive,
+// which is why only symbols and the space bar fail. A void keysym
+// press+release before the text works around this, exactly like the
+// workaround Valve added to gamescope for Steam/Chromium:
+// https://github.com/atx/wtype/issues/31
+// VoidSymbol produces no character, so it is ignored by every other app.
 function buildTypeCommand(text) {
-    return ["wtype", "--", text]
+    return ["wtype", "-k", "VoidSymbol", "--", text]
 }
 
 function buildKeyCommand(keysym) {
