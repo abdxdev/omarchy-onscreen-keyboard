@@ -347,6 +347,8 @@ function keysymForChar(character) {
     var text = String(character || "")
     if (text.length === 0) return text
 
+    if (text === " ") return "space"
+
     var codePoint = text.codePointAt(0)
     if (codePoint < 0x80) return text
 
