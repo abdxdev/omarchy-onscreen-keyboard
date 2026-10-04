@@ -201,7 +201,11 @@ Item {
     }
 
     function cycleLanguage() {
-        if (languageCycle.length < 2) return
+        // Only one XKB layout: switch the fcitx5 input method (e.g. rime) instead.
+        if (languageCycle.length < 2) {
+            Quickshell.execDetached(["fcitx5-remote", "-t"])
+            return
+        }
         // Advance our local index so we know exactly what layout is next,
         // independent of the system's virtual keyboard reporting wrong index.
         layoutCycleIndex = (layoutCycleIndex + 1) % languageCycle.length
