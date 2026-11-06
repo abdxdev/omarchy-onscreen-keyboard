@@ -128,18 +128,24 @@ Item {
         }
     }
 
+    // Hyprland lists more than typing keyboards. Virtual keyboards
+    // (hl-virtual-*, keyd-virtual-*) and ACPI button devices (power/sleep
+    // button, lid switch, video bus, hotkey) all show up under `keyboards`,
+    // and on laptops the buttons come first with active_layout_index 0.
+    // Matching them would make the detected active layout wrong.
+    readonly property string nonTypingDevicePattern:
+        "virtual|power-button|sleep-button|lid-switch|video-bus|hotkey"
+
     function refreshLayoutsFromHypr() {
         layoutDetectProcess.running = false
-        // Use the physical keyboard (not virtual) to detect active layout.
-        // Filter out virtual keyboards (hl-virtual-*, keyd-virtual-*) which
-        // always report index 0 and would make active detection unreliable.
+        // Use a physical typing keyboard to detect the active layout.
         // Also emit NAME\t<code>\t<fullname> lines for the lang button label.
         layoutDetectProcess.command = ["bash", "-lc",
-            "active_keymap=$(hyprctl devices -j | jq -r '.keyboards[] | select(.name | test(\"virtual\"; \"i\") | not) | .active_keymap' 2>/dev/null | head -n1); "
+            "active_keymap=$(hyprctl devices -j | jq -r '.keyboards[] | select(.name | test(\"" + nonTypingDevicePattern + "\"; \"i\") | not) | .active_keymap' 2>/dev/null | head -n1); "
             + "active=$(awk -v target=\"$active_keymap\" 'BEGIN{s=0} /^! layout/{s=1;next} /^!/{if(s) exit} s && NF>=2 { code=$1; $1=\"\"; sub(/^ +/, \"\", $0); if ($0 == target) { print code; exit } }' /usr/share/X11/xkb/rules/base.lst 2>/dev/null); "
-            + "if [[ -z \"$active\" ]]; then active=$(hyprctl devices -j | jq -r '.keyboards[] | select(.name | test(\"virtual\"; \"i\") | not) as $k | ($k.layout | split(\",\")[($k.active_layout_index // 0)])' 2>/dev/null | head -n1); fi; "
+            + "if [[ -z \"$active\" ]]; then active=$(hyprctl devices -j | jq -r '.keyboards[] | select(.name | test(\"" + nonTypingDevicePattern + "\"; \"i\") | not) as $k | ($k.layout | split(\",\")[($k.active_layout_index // 0)])' 2>/dev/null | head -n1); fi; "
             + "printf 'ACTIVE\\t%s\\n' \"$active\"; "
-            + "layouts=$(hyprctl devices -j | jq -r '(.keyboards[] | select(.name | test(\"virtual\"; \"i\") | not) | .layout)' | head -n1 | tr ',' '\\n' | sed '/^$/d'); "
+            + "layouts=$(hyprctl devices -j | jq -r '(.keyboards[] | select(.name | test(\"" + nonTypingDevicePattern + "\"; \"i\") | not) | .layout)' | head -n1 | tr ',' '\\n' | sed '/^$/d'); "
             + "echo \"$layouts\" | awk '{print \"LAYOUT\\t\" $0}'; "
             + "echo \"$layouts\" | while read code; do "
             + "  name=$(awk -v c=\"$code\" 'BEGIN{s=0} /^! layout/{s=1;next} /^!/{if(s) exit} s && NF>=2 && $1==c { $1=\"\"; sub(/^ +/,\"\",$0); print $0; exit }' /usr/share/X11/xkb/rules/base.lst 2>/dev/null); "
