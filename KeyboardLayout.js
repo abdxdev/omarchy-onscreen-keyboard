@@ -1,4 +1,5 @@
 .pragma library
+.import "Keysyms.js" as Keysyms
 
 // Each key: { t: base char, s: shifted char } for typed keys,
 // or { label, key: keysym/modifier-name, w: width factor } for special keys.
@@ -51,207 +52,6 @@ var rows = [
     ]
 ]
 
-var tokenCharMap = {
-    space: " ",
-    grave: "`",
-    asciitilde: "~",
-    exclam: "!",
-    at: "@",
-    numbersign: "#",
-    dollar: "$",
-    percent: "%",
-    asciicircum: "^",
-    ampersand: "&",
-    asterisk: "*",
-    parenleft: "(",
-    parenright: ")",
-    minus: "-",
-    underscore: "_",
-    equal: "=",
-    plus: "+",
-    bracketleft: "[",
-    braceleft: "{",
-    bracketright: "]",
-    braceright: "}",
-    backslash: "\\",
-    bar: "|",
-    semicolon: ";",
-    colon: ":",
-    apostrophe: "'",
-    quotedbl: "\"",
-    comma: ",",
-    less: "<",
-    period: ".",
-    greater: ">",
-    slash: "/",
-    question: "?",
-    guillemotleft: "\u00ab",
-    guillemotright: "\u00bb",
-    ccedilla: "\u00e7",
-    Ccedilla: "\u00c7",
-    ntilde: "\u00f1",
-    Ntilde: "\u00d1",
-    adiaeresis: "\u00e4",
-    Adiaeresis: "\u00c4",
-    odiaeresis: "\u00f6",
-    Odiaeresis: "\u00d6",
-    udiaeresis: "\u00fc",
-    Udiaeresis: "\u00dc",
-    eacute: "\u00e9",
-    Eacute: "\u00c9",
-    aacute: "\u00e1",
-    Aacute: "\u00c1",
-    iacute: "\u00ed",
-    Iacute: "\u00cd",
-    oacute: "\u00f3",
-    Oacute: "\u00d3",
-    uacute: "\u00fa",
-    Uacute: "\u00da",
-    ssharp: "\u00df",
-    section: "\u00a7",
-    degree: "\u00b0",
-    idotless: "\u0131",
-    numerosign: "\u2116",
-    endash: "\u2013",
-    emdash: "\u2014",
-    doublelowquotemark: "\u201e",
-    leftdoublequotemark: "\u201c",
-    rightdoublequotemark: "\u201d",
-    brokenbar: "\u00a6",
-    currency: "\u00a4",
-    EuroSign: "\u20ac"
-}
-
-// X11 Cyrillic keysym names -> characters. Cyrillic layouts (ua, ru, bg,
-// by, rs, mk) spell their symbols as named keysyms rather than U#### escapes,
-// so without this every key falls back to its Latin label.
-var cyrillicCharMap = {
-    Cyrillic_IO: "\u0401",
-    Serbian_DJE: "\u0402",
-    Macedonia_GJE: "\u0403",
-    Ukrainian_IE: "\u0404",
-    Macedonia_DSE: "\u0405",
-    Ukrainian_I: "\u0406",
-    Ukrainian_YI: "\u0407",
-    Cyrillic_JE: "\u0408",
-    Cyrillic_LJE: "\u0409",
-    Cyrillic_NJE: "\u040a",
-    Serbian_TSHE: "\u040b",
-    Macedonia_KJE: "\u040c",
-    Byelorussian_SHORTU: "\u040e",
-    Cyrillic_DZHE: "\u040f",
-    Cyrillic_A: "\u0410",
-    Cyrillic_BE: "\u0411",
-    Cyrillic_VE: "\u0412",
-    Cyrillic_GHE: "\u0413",
-    Cyrillic_DE: "\u0414",
-    Cyrillic_IE: "\u0415",
-    Cyrillic_ZHE: "\u0416",
-    Cyrillic_ZE: "\u0417",
-    Cyrillic_I: "\u0418",
-    Cyrillic_SHORTI: "\u0419",
-    Cyrillic_KA: "\u041a",
-    Cyrillic_EL: "\u041b",
-    Cyrillic_EM: "\u041c",
-    Cyrillic_EN: "\u041d",
-    Cyrillic_O: "\u041e",
-    Cyrillic_PE: "\u041f",
-    Cyrillic_ER: "\u0420",
-    Cyrillic_ES: "\u0421",
-    Cyrillic_TE: "\u0422",
-    Cyrillic_U: "\u0423",
-    Cyrillic_EF: "\u0424",
-    Cyrillic_HA: "\u0425",
-    Cyrillic_TSE: "\u0426",
-    Cyrillic_CHE: "\u0427",
-    Cyrillic_SHA: "\u0428",
-    Cyrillic_SHCHA: "\u0429",
-    Cyrillic_HARDSIGN: "\u042a",
-    Cyrillic_YERU: "\u042b",
-    Cyrillic_SOFTSIGN: "\u042c",
-    Cyrillic_E: "\u042d",
-    Cyrillic_YU: "\u042e",
-    Cyrillic_YA: "\u042f",
-    Cyrillic_a: "\u0430",
-    Cyrillic_be: "\u0431",
-    Cyrillic_ve: "\u0432",
-    Cyrillic_ghe: "\u0433",
-    Cyrillic_de: "\u0434",
-    Cyrillic_ie: "\u0435",
-    Cyrillic_zhe: "\u0436",
-    Cyrillic_ze: "\u0437",
-    Cyrillic_i: "\u0438",
-    Cyrillic_shorti: "\u0439",
-    Cyrillic_ka: "\u043a",
-    Cyrillic_el: "\u043b",
-    Cyrillic_em: "\u043c",
-    Cyrillic_en: "\u043d",
-    Cyrillic_o: "\u043e",
-    Cyrillic_pe: "\u043f",
-    Cyrillic_er: "\u0440",
-    Cyrillic_es: "\u0441",
-    Cyrillic_te: "\u0442",
-    Cyrillic_u: "\u0443",
-    Cyrillic_ef: "\u0444",
-    Cyrillic_ha: "\u0445",
-    Cyrillic_tse: "\u0446",
-    Cyrillic_che: "\u0447",
-    Cyrillic_sha: "\u0448",
-    Cyrillic_shcha: "\u0449",
-    Cyrillic_hardsign: "\u044a",
-    Cyrillic_yeru: "\u044b",
-    Cyrillic_softsign: "\u044c",
-    Cyrillic_e: "\u044d",
-    Cyrillic_yu: "\u044e",
-    Cyrillic_ya: "\u044f",
-    Cyrillic_io: "\u0451",
-    Serbian_dje: "\u0452",
-    Macedonia_gje: "\u0453",
-    Ukrainian_ie: "\u0454",
-    Macedonia_dse: "\u0455",
-    Ukrainian_i: "\u0456",
-    Ukrainian_yi: "\u0457",
-    Cyrillic_je: "\u0458",
-    Cyrillic_lje: "\u0459",
-    Cyrillic_nje: "\u045a",
-    Serbian_tshe: "\u045b",
-    Macedonia_kje: "\u045c",
-    Byelorussian_shortu: "\u045e",
-    Cyrillic_dzhe: "\u045f",
-    Ukrainian_GHE_WITH_UPTURN: "\u0490",
-    Ukrainian_ghe_with_upturn: "\u0491",
-    Cyrillic_GHE_bar: "\u0492",
-    Cyrillic_ghe_bar: "\u0493",
-    Cyrillic_ZHE_descender: "\u0496",
-    Cyrillic_zhe_descender: "\u0497",
-    Cyrillic_KA_descender: "\u049a",
-    Cyrillic_ka_descender: "\u049b",
-    Cyrillic_KA_vertstroke: "\u049c",
-    Cyrillic_ka_vertstroke: "\u049d",
-    Cyrillic_EN_descender: "\u04a2",
-    Cyrillic_en_descender: "\u04a3",
-    Cyrillic_U_straight: "\u04ae",
-    Cyrillic_u_straight: "\u04af",
-    Cyrillic_U_straight_bar: "\u04b0",
-    Cyrillic_u_straight_bar: "\u04b1",
-    Cyrillic_HA_descender: "\u04b2",
-    Cyrillic_ha_descender: "\u04b3",
-    Cyrillic_CHE_descender: "\u04b6",
-    Cyrillic_che_descender: "\u04b7",
-    Cyrillic_CHE_vertstroke: "\u04b8",
-    Cyrillic_che_vertstroke: "\u04b9",
-    Cyrillic_SHHA: "\u04ba",
-    Cyrillic_shha: "\u04bb",
-    Cyrillic_SCHWA: "\u04d8",
-    Cyrillic_schwa: "\u04d9",
-    Cyrillic_I_macron: "\u04e2",
-    Cyrillic_i_macron: "\u04e3",
-    Cyrillic_O_bar: "\u04e8",
-    Cyrillic_o_bar: "\u04e9",
-    Cyrillic_U_macron: "\u04ee",
-    Cyrillic_u_macron: "\u04ef"
-}
-
 function cloneKey(keyData) {
     var out = {}
     for (var field in keyData) {
@@ -276,8 +76,8 @@ function cloneRows(sourceRows) {
 function tokenToText(token, fallback) {
     var normalized = String(token || "").trim()
     if (normalized === "") return fallback
-    if (tokenCharMap.hasOwnProperty(normalized)) return tokenCharMap[normalized]
-    if (cyrillicCharMap.hasOwnProperty(normalized)) return cyrillicCharMap[normalized]
+    // Every keysym with a Unicode equivalent (generated, see tools/gen-keysyms.py).
+    if (Keysyms.keysymChars.hasOwnProperty(normalized)) return Keysyms.keysymChars[normalized]
     if (/^U[0-9A-Fa-f]{4,6}$/.test(normalized)) {
         return String.fromCodePoint(parseInt(normalized.slice(1), 16))
     }
@@ -292,6 +92,91 @@ function tokenToText(token, fallback) {
     if (normalized.length === 1) return normalized
     if (/^[A-Za-z0-9]$/.test(normalized)) return normalized
     return fallback
+}
+
+// ---- Letter detection -------------------------------------------------------
+//
+// Kept here (not in Keyboard.qml) so tests/ can run it under node.
+
+// xkb layout code -> BCP-47 tag for the languages whose case mapping differs
+// from the default one. Anything else uses the plain, locale-independent
+// toUpperCase()/toLowerCase().
+var localeForLayout = { tr: "tr", az: "az", lt: "lt" }
+
+function layoutLanguageTag(layoutCode) {
+    var code = String(layoutCode || "").split("(")[0].trim().toLowerCase()
+    return localeForLayout.hasOwnProperty(code) ? localeForLayout[code] : ""
+}
+
+function upperOf(text, lang) {
+    return lang ? text.toLocaleUpperCase(lang) : text.toUpperCase()
+}
+
+function lowerOf(text, lang) {
+    return lang ? text.toLocaleLowerCase(lang) : text.toLowerCase()
+}
+
+// Qt's JS engine has no \p{L}, so test Unicode category L*/M* against the
+// generated range table (binary search over flat [start, end, ...] pairs).
+function isLetterOrMark(char) {
+    if (!char) return false
+    var cp = String(char).codePointAt(0)
+    var ranges = Keysyms.letterRanges
+    var lo = 0, hi = (ranges.length >> 1) - 1
+    while (lo <= hi) {
+        var mid = (lo + hi) >> 1
+        if (cp < ranges[mid * 2]) hi = mid - 1
+        else if (cp > ranges[mid * 2 + 1]) lo = mid + 1
+        else return true
+    }
+    return false
+}
+
+// Georgian Mkhedruli has Mtavruli capitals in recent Unicode, so the engine
+// reports a case mapping, but Georgian keyboards treat it as caseless: Shift
+// selects another letter and Caps Lock does nothing.
+function isMkhedruli(char) {
+    var cp = String(char).codePointAt(0)
+    return (cp >= 0x10d0 && cp <= 0x10fa) || (cp >= 0x10fd && cp <= 0x10ff)
+}
+
+// Classifies a typed key:
+//   "cased"    shift/caps swap case (a/A, ж/Ж, i/İ on tr). The shifted symbol is
+//              the capital of the base, or the base is the lowercase of the
+//              shifted one. Asking merely whether the base has a capital is not
+//              enough: French AZERTY carries é on the same key as 2, and é does
+//              have a capital, so Caps Lock would type 2 instead of É.
+//   "caseless" a letter of a script without case (Arabic, Hebrew, Thai,
+//              Georgian, Devanagari, CJK...). Caps Lock does nothing; Shift
+//              gives keyData.s if present. Combining marks (Arabic harakat,
+//              Thai vowels, Devanagari matras) count too, since those layouts
+//              put them on keys of their own and they should not render as
+//              stacked punctuation-style keys.
+//   "other"    digits, punctuation, ß, é-over-2 and anything else: rendered as
+//              dual keys, shift selects the second symbol.
+function keyClass(keyData, lang) {
+    var base = keyData.t || ""
+    var shifted = keyData.s || ""
+    if (base.length === 0) return "other"
+    if (shifted.length > 0 && shifted !== base
+            && (shifted === upperOf(base, lang) || lowerOf(shifted, lang) === base)) {
+        return "cased"
+    }
+    if (isLetterOrMark(base)
+            && ((upperOf(base, lang) === base && lowerOf(base, lang) === base) || isMkhedruli(base))) {
+        return "caseless"
+    }
+    return "other"
+}
+
+function isLetterKey(keyData, lang) {
+    return keyClass(keyData, lang) !== "other"
+}
+
+// upper: Caps xor Shift. shift: Shift alone.
+function resolveTypedChar(keyData, upper, shift, lang) {
+    if (keyClass(keyData, lang) === "cased") return upper && keyData.s ? keyData.s : keyData.t
+    return shift && keyData.s ? keyData.s : keyData.t
 }
 
 function applyLanguage(rowsSource, layoutCode, symbolMap) {

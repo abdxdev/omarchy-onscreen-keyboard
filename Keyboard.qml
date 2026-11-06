@@ -341,24 +341,15 @@ Item {
         }
     }
 
-    // A letter key is one whose shifted symbol is simply the capital of its
-    // base, which holds in any script and needs no per-alphabet table.
-    // `/^[a-z]$/` recognised only Latin, so Cyrillic and Greek letters were
-    // treated as punctuation: Caps Lock did nothing on them and they rendered
-    // as stacked dual keys. Asking merely whether the base has a capital is not
-    // enough either — French AZERTY carries é on the same key as 2, and é does
-    // have a capital, so Caps Lock would type 2 instead of É.
+    // Letter detection lives in KeyboardLayout.js (keyClass) so it can be
+    // tested under node. Case-mapping rules depend on the layout's language
+    // (Turkish dotted/dotless i), hence the language tag.
     function isLetterKey(keyData) {
-        var base = keyData.t || ""
-        var shifted = keyData.s || ""
-        return base.length > 0 && shifted.length > 0 && shifted === base.toUpperCase()
+        return Layout.isLetterKey(keyData, Layout.layoutLanguageTag(currentLayout))
     }
 
     function resolvedTypedChar(keyData) {
-        if (isLetterKey(keyData)) {
-            return isUpper() && keyData.s ? keyData.s : keyData.t
-        }
-        return shiftOn && keyData.s ? keyData.s : keyData.t
+        return Layout.resolveTypedChar(keyData, isUpper(), shiftOn, Layout.layoutLanguageTag(currentLayout))
     }
 
     // Punctuation/number keys show both symbols stacked (like the
