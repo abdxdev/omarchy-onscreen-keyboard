@@ -20,6 +20,24 @@ click the bar icon or the panel's own close button.
 - `xkbcli` (ships with `libxkbcommon`, already a Hyprland dependency) — used to
   compile the active layout so the key caps show the right symbols.
 
+## Key labels and scripts
+
+Key caps come from the layout's compiled xkb symbols. Keysym names (`Arabic_beh`,
+`Cyrillic_zhe`, `hebrew_qoph`, ...) are resolved through `Keysyms.js`, which is
+generated from the full xkbcommon keysym table, so every script xkb supports is
+labelled and typed. Scripts with case (Latin, Cyrillic, Greek, Armenian, ...) get
+Caps Lock/Shift case swapping, including Turkish/Azeri dotted and dotless i;
+caseless scripts (Arabic, Hebrew, Thai, Georgian, Devanagari, ...) render as
+single keys that Caps Lock leaves alone.
+
+To regenerate `Keysyms.js` (e.g. after a libxkbcommon update):
+
+```sh
+python3 tools/gen-keysyms.py [/usr/include/xkbcommon/xkbcommon-keysyms.h]
+```
+
+Tests (need `node` and `xkbcli`): `node tests/run.js`
+
 ## Install
 
 ```sh
